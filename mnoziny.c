@@ -17,13 +17,18 @@ ZOZNAM nahodne_pole(int k){
 // odstranit prvok 
 // vypis mnoziny
 // mergesort v C
-// 
 
 
 ZOZNAM funkcia_append(ZOZNAM *z){
     z->dlzka++;
     z->pole = (int*)malloc(z->dlzka * sizeof(int));
     return *z;
+}
+
+void printlist(ZOZNAM z){
+    for(int i = 0; i < z.dlzka; i++){
+        printf("%d ", z.pole[i]);
+    }
 }
 int main(){
     ZOZNAM zoznam;
@@ -37,9 +42,7 @@ int main(){
     funkcia_append(&zoznam);
     printf("dlzka po funkcii: %d\n", zoznam.dlzka);
     printf("mnozina:");
-    for (int k = 0; k < zoznam.dlzka; k++) {
-            printf("%d ", zoznam.pole[k]);
-    }
+    printlist(zoznam);
     printf("\n");
     free(zoznam.pole);
 }
