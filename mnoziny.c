@@ -116,7 +116,7 @@ void mergeSort(ZOZNAM *arr, int l, int r){
     if (l < r){
         int m = l + (r - l) / 2;
         mergeSort(arr, l, m);
-        mergeSort(arr, m + 1, r);
+        mergeSort(arr, m+1, r);
         merge(arr->pole, l, m, r);
     }
 }
@@ -180,6 +180,7 @@ int main(){
 
 	puts("append function:");
     funkcia_append(&zoznam, 5);
+	funkcia_append(&zoznam, 8);
     printlist(zoznam);
 
     int hladaj = 5;
@@ -195,7 +196,7 @@ int main(){
 
 	puts("mergesort list:");
 	printlist(zoznam);
-	mergeSort(&zoznam, 0, zoznam.dlzka);
+	mergeSort(&zoznam, 0, zoznam.dlzka-1);
 	printlist(zoznam);
 
 	puts("intersection list nového listu a new listu:");
@@ -214,6 +215,5 @@ int main(){
 	puts("delete intersect last item and return list:");
 	pop(&intersect);
 	printlist(intersect);
-	printf("%i", intersect.dlzka);
     free(zoznam.pole);
 }
