@@ -1,12 +1,12 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 
 typedef struct{
     int dlzka;
     int *pole;
 }ZOZNAM;
 
-// odstranit prvok 
 
 
 // vypis mnoziny
@@ -48,9 +48,9 @@ int binarySearch(ZOZNAM *zoz, int x, int low, int high) {
 
     // Search the right half
     return binarySearch(zoz, x, mid + 1, high);
-  }
+  	}
 
-  return -1;
+	return -1;
 }
 
 // prazdna mnozina dlzky n
@@ -164,6 +164,10 @@ ZOZNAM intersection(ZOZNAM *zoz1, ZOZNAM *zoz2){
 	printf("%i\n", count);
 	return inter;
 }
+// odstranit prvok 
+void pop(ZOZNAM *zoz){
+	memmove(zoz, zoz->pole+1, zoz->dlzka--*sizeof(int));
+}
 int main(){
     ZOZNAM zoznam;
     zoznam.dlzka = 3;
@@ -197,5 +201,8 @@ int main(){
 	printlist(new);
 	ZOZNAM intersect = intersection(&zoznam, &new);
 	printlist(intersect);
+	pop(&intersect);
+	printlist(intersect);
+	printf("%i", intersect.dlzka);
     free(zoznam.pole);
 }
