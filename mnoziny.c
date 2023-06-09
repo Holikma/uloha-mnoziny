@@ -8,7 +8,6 @@ typedef struct{
 
 // prienik lineárny čas - output nová množina na pozícií *
 // odstranit prvok 
-// mergesort v C
 
 
 // vypis mnoziny
@@ -74,25 +73,88 @@ void funkcia_append(ZOZNAM *zoz, int prvok){
     zoz->dlzka++;
 }
 
+
+// mergesort v C
+void merge(int *arr, int l, int m, int r){
+    int k;
+    int n1 = m - l + 1;
+    int n2 = r - m;
+    int *L = (int*)malloc(n1*sizeof(int));
+	int *R = (int*)malloc(n2*sizeof(int));
+	
+
+    for (int i = 0; i < n1; i++){
+        L[i] = arr[l + i];
+	}
+
+    for (int j = 0; j < n2; j++){
+        R[j] = arr[m + 1 + j];
+	}
+
+    int i = 0;
+    int j = 0;
+    k = l;
+    while (i < n1 && j < n2){
+        if (L[i] <= R[j]){
+            arr[k] = L[i];
+            i++;
+        }
+        else{
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+    while (j < n2){
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+	free(R);
+	free(L);
+}
+
+void mergeSort(int *arr, int l, int r){
+    if (l < r){
+        int m = l + (r - l) / 2;
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}
+
 int main(){
     ZOZNAM zoznam;
-    zoznam.dlzka = 3;
+    zoznam.dlzka = 8;
     zoznam.pole = (int*)malloc(zoznam.dlzka*sizeof(int));
     for(int i = 0; i < zoznam.dlzka; i++){
-        zoznam.pole[i] = i+1;
+		if (i % 2 == 0){
+			zoznam.pole[i] = -i;
+		}
+		else{
+        	zoznam.pole[i] = i;
+		}
     }
-    printlist(zoznam);
-    funkcia_append(&zoznam, 5);
-    printlist(zoznam);
-    printf("%i", zoznam.dlzka);
-    int hladaj = 5;
-    printf("Cislo %i je na indexe: %i\n",hladaj,  binarySearch(&zoznam, hladaj, 0, zoznam.dlzka));
-    ZOZNAM k = emptylist(5);
-	printlist(k);
+    //printlist(zoznam);
+    //funkcia_append(&zoznam, 5);
+    //printlist(zoznam);
+    //int hladaj = 5;
+    //printf("Cislo %i je na indexe: %i\n",hladaj,  binarySearch(&zoznam, hladaj, 0, zoznam.dlzka));
+    //ZOZNAM k = emptylist(5);
+	//printlist(k);
+
 	// zjednotenie sa robí síce v lineárnom čase, ale potom treba sortnuť finálne pole, ak byboli polia už sortnuté, tak sa použije 
 	// algoritmus, ktorý porovnáva jednotlivé prvky polí pomocou indexov a menší vloží do nového pola, ale keďže máme aj funkciu na sort, 
 	// tak som sa rozhodol použiť jednoduchší spôsob.
-	ZOZNAM uni = unionlists(&k, &zoznam);
-	printlist(uni);
+
+	//ZOZNAM uni = unionlists(&k, &zoznam);
+	//printlist(uni);
+	mergeSort(zoznam.pole, 0, zoznam.dlzka);
+	printlist(zoznam);
     free(zoznam.pole);
 }
