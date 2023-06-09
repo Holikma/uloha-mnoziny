@@ -6,43 +6,50 @@ typedef struct{
     int *pole;
 }ZOZNAM;
 
-ZOZNAM nahodne_pole(int k){
-
-}
 // zjednotenie linearny čas
 // prienik lineárny čas - output nová množina na pozícií *
-// prazdna mnozina dlzky n
 // binary search
-// pridat prvok na koniec
 // odstranit prvok 
-// vypis mnoziny
 // mergesort v C
 
 
-ZOZNAM funkcia_append(ZOZNAM *z){
-    z->dlzka++;
-    z->pole = (int*)malloc(z->dlzka * sizeof(int));
-    return *z;
-}
-
+// vypis mnoziny
 void printlist(ZOZNAM z){
     for(int i = 0; i < z.dlzka; i++){
-        printf("%d ", z.pole[i]);
+        printf("%i ", z.pole[i]);
     }
+    printf("\n");
 }
+
+// prazdna mnozina dlzky n
+ZOZNAM emptylist(int d){
+    ZOZNAM z;
+    z.dlzka = d;
+    z.pole = (int*)malloc(z.dlzka*sizeof(int));
+    for (int i = 0; i < z.dlzka; i++){
+        z.pole[i] = 0;
+    }
+    printlist(z);
+    return z;
+}
+
+// pridat prvok na koniec
+void funkcia_append(ZOZNAM *zoz, int prvok){
+    int *new_ptr = realloc(zoz->pole, sizeof *(zoz->pole) * (zoz->dlzka + 1u));
+    zoz->pole = new_ptr;
+    zoz->pole[zoz->dlzka] = prvok;
+    zoz->dlzka++;
+}
+
 int main(){
     ZOZNAM zoznam;
     zoznam.dlzka = 3;
     zoznam.pole = (int*)malloc(zoznam.dlzka*sizeof(int));
     for(int i = 0; i < zoznam.dlzka; i++){
-        zoznam.pole[i] = i;
+        zoznam.pole[i] = i+1;
     }
-    
-    printf("dlzka pred funkciou: %d\n", zoznam.dlzka);
-    funkcia_append(&zoznam);
-    printf("dlzka po funkcii: %d\n", zoznam.dlzka);
-    printf("mnozina:");
     printlist(zoznam);
-    printf("\n");
+    funkcia_append(&zoznam, 5);
+    ZOZNAM k = emptylist(5);
     free(zoznam.pole);
 }
