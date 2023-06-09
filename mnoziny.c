@@ -6,7 +6,6 @@ typedef struct{
     int *pole;
 }ZOZNAM;
 
-// prienik lineárny čas - output nová množina na pozícií *
 // odstranit prvok 
 
 
@@ -118,7 +117,6 @@ void merge(int *arr, int l, int m, int r){
 	free(R);
 	free(L);
 }
-
 void mergeSort(int *arr, int l, int r){
     if (l < r){
         int m = l + (r - l) / 2;
@@ -128,9 +126,47 @@ void mergeSort(int *arr, int l, int r){
     }
 }
 
+// prienik lineárny čas - output nová množina na pozícií *
+ZOZNAM intersection(ZOZNAM *zoz1, ZOZNAM *zoz2){
+	int count = 0;
+	int index1 = 0;
+	int index2 = 0;
+	for (int i = 0; i < zoz1->dlzka + zoz2->dlzka; i++){
+		if (zoz1->pole[index1] == zoz2->pole[index2]){
+			index1++; index2++; count++;
+		}
+		else if (zoz1->pole[index1] > zoz2->pole[index2]){
+			index2++;
+		}
+		else{
+			index1++;
+		}
+	}
+
+	ZOZNAM inter;
+	inter.dlzka = count;
+	inter.pole = (int*)malloc(inter.dlzka*sizeof(int));
+	count = 0;index1 = 0; index2 =0;
+	for (int i = 0; i < zoz1->dlzka + zoz2->dlzka; i++){
+		if (zoz1->pole[index1] == zoz2->pole[index2]){
+			inter.pole[count] = zoz1->pole[index2];
+			index1++; 
+			index2++;
+			count++;
+		}
+		else if (zoz1->pole[index1] > zoz2->pole[index2]){
+			index2++;
+		}
+		else{
+			index1++;
+		}
+	}
+	printf("%i\n", count);
+	return inter;
+}
 int main(){
     ZOZNAM zoznam;
-    zoznam.dlzka = 8;
+    zoznam.dlzka = 3;
     zoznam.pole = (int*)malloc(zoznam.dlzka*sizeof(int));
     for(int i = 0; i < zoznam.dlzka; i++){
 		if (i % 2 == 0){
@@ -147,14 +183,19 @@ int main(){
     //printf("Cislo %i je na indexe: %i\n",hladaj,  binarySearch(&zoznam, hladaj, 0, zoznam.dlzka));
     //ZOZNAM k = emptylist(5);
 	//printlist(k);
-
-	// zjednotenie sa robí síce v lineárnom čase, ale potom treba sortnuť finálne pole, ak byboli polia už sortnuté, tak sa použije 
-	// algoritmus, ktorý porovnáva jednotlivé prvky polí pomocou indexov a menší vloží do nového pola, ale keďže máme aj funkciu na sort, 
-	// tak som sa rozhodol použiť jednoduchší spôsob.
-
 	//ZOZNAM uni = unionlists(&k, &zoznam);
 	//printlist(uni);
-	mergeSort(zoznam.pole, 0, zoznam.dlzka);
+	//mergeSort(zoznam.pole, 0, zoznam.dlzka);
+	//printlist(zoznam);
+	ZOZNAM new;
+	new.dlzka = 3;
+	new.pole = (int*)malloc(new.dlzka*sizeof(int));
+	for(int i = 0; i < new.dlzka; i++){
+		new.pole[i] = i;
+    }
 	printlist(zoznam);
+	printlist(new);
+	ZOZNAM intersect = intersection(&zoznam, &new);
+	printlist(intersect);
     free(zoznam.pole);
 }
