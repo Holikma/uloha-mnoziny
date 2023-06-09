@@ -6,9 +6,7 @@ typedef struct{
     int *pole;
 }ZOZNAM;
 
-// zjednotenie linearny čas
 // prienik lineárny čas - output nová množina na pozícií *
-// binary search
 // odstranit prvok 
 // mergesort v C
 
@@ -21,6 +19,42 @@ void printlist(ZOZNAM z){
     printf("\n");
 }
 
+// zjednotenie linearny čas
+ZOZNAM unionlists(ZOZNAM *zoz1, ZOZNAM *zoz2){
+	ZOZNAM uni;
+	uni.dlzka = zoz1->dlzka + zoz2->dlzka;
+	uni.pole = (int*)malloc(uni.dlzka*sizeof(int));
+	int j = 0;
+	for(int i = 0; i < zoz1->dlzka; i++){
+		uni.pole[j] = zoz1->pole[i];
+  	j++;  
+  	}
+  	for(int i = 0; i < zoz2->dlzka; i++){
+  		uni.pole[j] = zoz2->pole[i];
+  	j++;
+  }
+  return uni;
+}
+// binary search
+int binarySearch(ZOZNAM *zoz, int x, int low, int high) {
+  if (high >= low) {
+    int mid = low + (high - low) / 2;
+
+    // If found at mid, then return it
+    if (zoz->pole[mid] == x)
+      return mid;
+
+    // Search the left half
+    if (zoz->pole[mid] > x)
+      return binarySearch(zoz, x, low, mid - 1);
+
+    // Search the right half
+    return binarySearch(zoz, x, mid + 1, high);
+  }
+
+  return -1;
+}
+
 // prazdna mnozina dlzky n
 ZOZNAM emptylist(int d){
     ZOZNAM z;
@@ -29,7 +63,6 @@ ZOZNAM emptylist(int d){
     for (int i = 0; i < z.dlzka; i++){
         z.pole[i] = 0;
     }
-    printlist(z);
     return z;
 }
 
@@ -50,6 +83,16 @@ int main(){
     }
     printlist(zoznam);
     funkcia_append(&zoznam, 5);
+    printlist(zoznam);
+    printf("%i", zoznam.dlzka);
+    int hladaj = 5;
+    printf("Cislo %i je na indexe: %i\n",hladaj,  binarySearch(&zoznam, hladaj, 0, zoznam.dlzka));
     ZOZNAM k = emptylist(5);
+	printlist(k);
+	// zjednotenie sa robí síce v lineárnom čase, ale potom treba sortnuť finálne pole, ak byboli polia už sortnuté, tak sa použije 
+	// algoritmus, ktorý porovnáva jednotlivé prvky polí pomocou indexov a menší vloží do nového pola, ale keďže máme aj funkciu na sort, 
+	// tak som sa rozhodol použiť jednoduchší spôsob.
+	ZOZNAM uni = unionlists(&k, &zoznam);
+	printlist(uni);
     free(zoznam.pole);
 }
