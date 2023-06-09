@@ -80,8 +80,6 @@ void merge(int *arr, int l, int m, int r){
     int n2 = r - m;
     int *L = (int*)malloc(n1*sizeof(int));
 	int *R = (int*)malloc(n2*sizeof(int));
-	
-
     for (int i = 0; i < n1; i++){
         L[i] = arr[l + i];
 	}
@@ -106,23 +104,20 @@ void merge(int *arr, int l, int m, int r){
     }
     while (i < n1) {
         arr[k] = L[i];
-        i++;
-        k++;
+        i++; k++;
     }
     while (j < n2){
         arr[k] = R[j];
-        j++;
-        k++;
+        j++; k++;
     }
-	free(R);
-	free(L);
+	free(R);free(L);
 }
-void mergeSort(int *arr, int l, int r){
+void mergeSort(ZOZNAM *arr, int l, int r){
     if (l < r){
         int m = l + (r - l) / 2;
         mergeSort(arr, l, m);
         mergeSort(arr, m + 1, r);
-        merge(arr, l, m, r);
+        merge(arr->pole, l, m, r);
     }
 }
 
@@ -149,7 +144,7 @@ ZOZNAM intersection(ZOZNAM *zoz1, ZOZNAM *zoz2){
 	count = 0;index1 = 0; index2 =0;
 	for (int i = 0; i < zoz1->dlzka + zoz2->dlzka; i++){
 		if (zoz1->pole[index1] == zoz2->pole[index2]){
-			inter.pole[count] = zoz1->pole[index2];
+			inter.pole[count] = zoz1->pole[index1];
 			index1++; 
 			index2++;
 			count++;
@@ -161,9 +156,9 @@ ZOZNAM intersection(ZOZNAM *zoz1, ZOZNAM *zoz2){
 			index1++;
 		}
 	}
-	printf("%i\n", count);
 	return inter;
 }
+
 // odstranit prvok 
 void pop(ZOZNAM *zoz){
 	memmove(zoz, zoz->pole+1, zoz->dlzka--*sizeof(int));
@@ -180,17 +175,30 @@ int main(){
         	zoznam.pole[i] = i;
 		}
     }
-    //printlist(zoznam);
-    //funkcia_append(&zoznam, 5);
-    //printlist(zoznam);
-    //int hladaj = 5;
-    //printf("Cislo %i je na indexe: %i\n",hladaj,  binarySearch(&zoznam, hladaj, 0, zoznam.dlzka));
-    //ZOZNAM k = emptylist(5);
-	//printlist(k);
-	//ZOZNAM uni = unionlists(&k, &zoznam);
-	//printlist(uni);
-	//mergeSort(zoznam.pole, 0, zoznam.dlzka);
-	//printlist(zoznam);
+	puts("nový zoznam:");
+    printlist(zoznam);
+
+	puts("append function:");
+    funkcia_append(&zoznam, 5);
+    printlist(zoznam);
+
+    int hladaj = 5;
+    printf("Cislo %i je na indexe: %i\n",hladaj,  binarySearch(&zoznam, hladaj, 0, zoznam.dlzka));
+    ZOZNAM k = emptylist(5);
+
+	puts("empty list:");
+	printlist(k);
+	
+	puts("union list empty list a nového listu:");
+	ZOZNAM uni = unionlists(&k, &zoznam);
+	printlist(uni);
+
+	puts("mergesort list:");
+	printlist(zoznam);
+	mergeSort(&zoznam, 0, zoznam.dlzka);
+	printlist(zoznam);
+
+	puts("intersection list nového listu a new listu:");
 	ZOZNAM new;
 	new.dlzka = 3;
 	new.pole = (int*)malloc(new.dlzka*sizeof(int));
@@ -199,8 +207,11 @@ int main(){
     }
 	printlist(zoznam);
 	printlist(new);
+
+	puts("prienik:");
 	ZOZNAM intersect = intersection(&zoznam, &new);
 	printlist(intersect);
+	puts("delete intersect last item and return list:");
 	pop(&intersect);
 	printlist(intersect);
 	printf("%i", intersect.dlzka);
