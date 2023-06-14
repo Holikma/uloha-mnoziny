@@ -10,43 +10,33 @@ typedef struct{
 
 
 // vypis mnoziny
-void printlist(ZOZNAM z){
-    for(int i = 0; i < z.dlzka; i++){
-        printf("%i ", z.pole[i]);
+void printlist(ZOZNAM *z){
+    for(int i = 0; i < z->dlzka; i++){
+        printf("%i ", z->pole[i]);
     }
     printf("\n");
 }
 
 // zjednotenie linearny čas
-ZOZNAM unionlists(ZOZNAM *zoz1, ZOZNAM *zoz2){
-	ZOZNAM uni;
-	uni.dlzka = zoz1->dlzka + zoz2->dlzka;
-	uni.pole = (int*)malloc(uni.dlzka*sizeof(int));
+void unionlists(ZOZNAM* un, ZOZNAM *zoz1, ZOZNAM *zoz2){
+	un->dlzka = zoz1->dlzka + zoz2->dlzka;
+	un->pole = (int*)malloc(un->dlzka*sizeof(int));
 	int j = 0;
 	for(int i = 0; i < zoz1->dlzka; i++){
-		uni.pole[j] = zoz1->pole[i];
+		un->pole[j] = zoz1->pole[i];
   	j++;  
   	}
   	for(int i = 0; i < zoz2->dlzka; i++){
-  		uni.pole[j] = zoz2->pole[i];
+  		un->pole[j] = zoz2->pole[i];
   	j++;
   }
-  return uni;
 }
 // binary search
 int binarySearch(ZOZNAM *zoz, int x, int low, int high) {
   if (high >= low) {
     int mid = low + (high - low) / 2;
-
-    // If found at mid, then return it
-    if (zoz->pole[mid] == x)
-      return mid;
-
-    // Search the left half
-    if (zoz->pole[mid] > x)
-      return binarySearch(zoz, x, low, mid - 1);
-
-    // Search the right half
+    if (zoz->pole[mid] == x) return mid;
+    if (zoz->pole[mid] > x) return binarySearch(zoz, x, low, mid - 1);
     return binarySearch(zoz, x, mid + 1, high);
   	}
 
@@ -54,14 +44,12 @@ int binarySearch(ZOZNAM *zoz, int x, int low, int high) {
 }
 
 // prazdna mnozina dlzky n
-ZOZNAM emptylist(int d){
-    ZOZNAM z;
-    z.dlzka = d;
-    z.pole = (int*)malloc(z.dlzka*sizeof(int));
-    for (int i = 0; i < z.dlzka; i++){
-        z.pole[i] = 0;
+void emptylist(ZOZNAM* n, int d){
+    n->dlzka = d;
+    n->pole = (int*)malloc(n->dlzka*sizeof(int));
+    for (int i = 0; i < n->dlzka; i++){
+        n->pole[i] = 0;
     }
-    return z;
 }
 
 // pridat prvok na koniec
@@ -71,7 +59,6 @@ void funkcia_append(ZOZNAM *zoz, int prvok){
     zoz->pole[zoz->dlzka] = prvok;
     zoz->dlzka++;
 }
-
 
 // mergesort v C
 void merge(int *arr, int l, int m, int r){
@@ -122,7 +109,7 @@ void mergeSort(ZOZNAM *arr, int l, int r){
 }
 
 // prienik lineárny čas - output nová množina na pozícií *
-ZOZNAM intersection(ZOZNAM *zoz1, ZOZNAM *zoz2){
+ void intersection(ZOZNAM* inter, ZOZNAM *zoz1, ZOZNAM *zoz2){
 	int count = 0;
 	int index1 = 0;
 	int index2 = 0;
@@ -137,14 +124,12 @@ ZOZNAM intersection(ZOZNAM *zoz1, ZOZNAM *zoz2){
 			index1++;
 		}
 	}
-
-	ZOZNAM inter;
-	inter.dlzka = count;
-	inter.pole = (int*)malloc(inter.dlzka*sizeof(int));
-	count = 0;index1 = 0; index2 =0;
+	inter->dlzka = count;
+	inter->pole = (int*)malloc(inter->dlzka*sizeof(int));
+	count = 0;index1 = 0; index2 = 0;
 	for (int i = 0; i < zoz1->dlzka + zoz2->dlzka; i++){
 		if (zoz1->pole[index1] == zoz2->pole[index2]){
-			inter.pole[count] = zoz1->pole[index1];
+			inter->pole[count] = zoz1->pole[index1];
 			index1++; 
 			index2++;
 			count++;
@@ -156,16 +141,16 @@ ZOZNAM intersection(ZOZNAM *zoz1, ZOZNAM *zoz2){
 			index1++;
 		}
 	}
-	return inter;
 }
 
 // odstranit prvok 
 void pop(ZOZNAM *zoz){
 	memmove(zoz, zoz->pole+1, zoz->dlzka--*sizeof(int));
 }
+
 int main(){
     ZOZNAM zoznam;
-    zoznam.dlzka = 3;
+    zoznam.dlzka = 5;
     zoznam.pole = (int*)malloc(zoznam.dlzka*sizeof(int));
     for(int i = 0; i < zoznam.dlzka; i++){
 		if (i % 2 == 0){
@@ -176,29 +161,31 @@ int main(){
 		}
     }
 	puts("nový zoznam:");
-    printlist(zoznam);
-
+    printlist(&zoznam);
+//
 	puts("append function:");
     funkcia_append(&zoznam, 5);
 	funkcia_append(&zoznam, 8);
-    printlist(zoznam);
-
+    printlist(&zoznam);
+//
     int hladaj = 5;
     printf("Cislo %i je na indexe: %i\n",hladaj,  binarySearch(&zoznam, hladaj, 0, zoznam.dlzka));
-    ZOZNAM k = emptylist(5);
-
+    ZOZNAM k;
+	emptylist(&k, 5);
+//
 	puts("empty list:");
-	printlist(k);
-	
+	printlist(&k);
+//
 	puts("union list empty list a nového listu:");
-	ZOZNAM uni = unionlists(&k, &zoznam);
-	printlist(uni);
-
-	puts("mergesort list:");
-	printlist(zoznam);
+	ZOZNAM uni; 
+	unionlists(&uni, &k, &zoznam);
+	printlist(&uni);
+//
+	puts("mergesort listu:");
+	printlist(&zoznam);
 	mergeSort(&zoznam, 0, zoznam.dlzka-1);
-	printlist(zoznam);
-
+	printlist(&zoznam);
+//
 	puts("intersection list nového listu a new listu:");
 	ZOZNAM new;
 	new.dlzka = 3;
@@ -206,14 +193,15 @@ int main(){
 	for(int i = 0; i < new.dlzka; i++){
 		new.pole[i] = i;
     }
-	printlist(zoznam);
-	printlist(new);
-
+	printlist(&zoznam);
+	printlist(&new);
+//
 	puts("prienik:");
-	ZOZNAM intersect = intersection(&zoznam, &new);
-	printlist(intersect);
+	ZOZNAM intersect;
+	intersection(&intersect, &zoznam, &new);
+	printlist(&intersect);
 	puts("delete intersect last item and return list:");
 	pop(&intersect);
-	printlist(intersect);
+	printlist(&intersect);
     free(zoznam.pole);
-}
+}//
