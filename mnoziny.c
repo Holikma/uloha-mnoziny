@@ -8,6 +8,13 @@ typedef struct{
 }ZOZNAM;
 
 
+void destructList(ZOZNAM* list) {
+    if (list->pole != NULL) {
+        free(list->pole);
+        list->pole = NULL;
+    }
+    list->dlzka = 0;
+}
 
 // vypis mnoziny
 void printlist(ZOZNAM *z){
@@ -55,9 +62,15 @@ void emptylist(ZOZNAM* n, int d){
 // pridat prvok na koniec
 void funkcia_append(ZOZNAM *zoz, int prvok){
     int *new_ptr = realloc(zoz->pole, sizeof *(zoz->pole) * (zoz->dlzka + 1u));
-    zoz->pole = new_ptr;
-    zoz->pole[zoz->dlzka] = prvok;
-    zoz->dlzka++;
+	if (new_ptr == NULL) {
+		printf("Memory error\n");
+        exit(1);
+	}
+	else{
+		zoz->pole = new_ptr;
+		zoz->pole[zoz->dlzka] = prvok;
+		zoz->dlzka++;
+	}
 }
 
 // mergesort v C
@@ -66,15 +79,25 @@ void merge(int *arr, int l, int m, int r){
     int n1 = m - l + 1;
     int n2 = r - m;
     int *L = (int*)malloc(n1*sizeof(int));
-	int *R = (int*)malloc(n2*sizeof(int));
-    for (int i = 0; i < n1; i++){
+	if (L == NULL) {
+		printf("Memory allocation error\n");
+        exit(1);
+    }
+	else{
+		for (int i = 0; i < n1; i++){
         L[i] = arr[l + i];
+		}
 	}
-
-    for (int j = 0; j < n2; j++){
-        R[j] = arr[m + 1 + j];
+	int *R = (int*)malloc(n2*sizeof(int));
+	if (R == NULL) {
+		printf("Memory allocation error\n");
+		exit(1);
 	}
-
+	else {
+    	for (int j = 0; j < n2; j++){
+        	R[j] = arr[m + 1 + j];
+		}
+	}
     int i = 0;
     int j = 0;
     k = l;
@@ -97,7 +120,8 @@ void merge(int *arr, int l, int m, int r){
         arr[k] = R[j];
         j++; k++;
     }
-	free(R);free(L);
+	free(L);
+	free(R);
 }
 void mergeSort(ZOZNAM *arr, int l, int r){
     if (l < r){
@@ -126,19 +150,25 @@ void mergeSort(ZOZNAM *arr, int l, int r){
 	}
 	inter->dlzka = count;
 	inter->pole = (int*)malloc(inter->dlzka*sizeof(int));
-	count = 0;index1 = 0; index2 = 0;
-	for (int i = 0; i < zoz1->dlzka + zoz2->dlzka; i++){
-		if (zoz1->pole[index1] == zoz2->pole[index2]){
-			inter->pole[count] = zoz1->pole[index1];
-			index1++; 
-			index2++;
-			count++;
-		}
-		else if (zoz1->pole[index1] > zoz2->pole[index2]){
-			index2++;
-		}
-		else{
-			index1++;
+	if (inter->pole == NULL){
+		printf("Memory error\n");
+		exit(1);
+    }
+	else{
+		count = 0;index1 = 0; index2 = 0;
+		for (int i = 0; i < zoz1->dlzka + zoz2->dlzka; i++){
+			if (zoz1->pole[index1] == zoz2->pole[index2]){
+				inter->pole[count] = zoz1->pole[index1];
+				index1++; 
+				index2++;
+				count++;
+			}
+			else if (zoz1->pole[index1] > zoz2->pole[index2]){
+				index2++;
+			}
+			else{
+				index1++;
+			}
 		}
 	}
 }
@@ -147,26 +177,25 @@ void mergeSort(ZOZNAM *arr, int l, int r){
 void pop(ZOZNAM *zoz){
 	memmove(zoz, zoz->pole+1, zoz->dlzka--*sizeof(int));
 }
-void destructList(ZOZNAM* list) {
-    if (list->pole != NULL) {
-        free(list->pole);
-        list->pole = NULL;
-    }
-    list->dlzka = 0;
-}
 
 int main(){
     ZOZNAM zoznam;
     zoznam.dlzka = 5;
     zoznam.pole = (int*)malloc(zoznam.dlzka*sizeof(int));
-    for(int i = 0; i < zoznam.dlzka; i++){
-		if (i % 2 == 0){
-			zoznam.pole[i] = -i;
+	if (zoznam.pole == NULL){
+		printf("Memory allocation error\n");
+		return 1;
+	}
+	else{
+		for(int i = 0; i < zoznam.dlzka; i++){
+			if (i % 2 == 0){
+				zoznam.pole[i] = -i;
+			}
+			else{
+				zoznam.pole[i] = i;
+			}
 		}
-		else{
-        	zoznam.pole[i] = i;
-		}
-    }
+	}
 	puts("nový zoznam:");
     printlist(&zoznam);
 //
@@ -193,13 +222,19 @@ int main(){
 	mergeSort(&zoznam, 0, zoznam.dlzka-1);
 	printlist(&zoznam);
 //
-	puts("intersection list nového listu a new listu:");
 	ZOZNAM new;
 	new.dlzka = 3;
 	new.pole = (int*)malloc(new.dlzka*sizeof(int));
-	for(int i = 0; i < new.dlzka; i++){
-		new.pole[i] = i;
-    }
+	if (new.pole != NULL){
+		for(int i = 0; i < new.dlzka; i++){
+			new.pole[i] = i;
+    	}
+	}
+	else {
+		puts("memory error");
+		exit(1);
+	}
+	puts("intersection list nového listu a new listu:");
 	printlist(&zoznam);
 	printlist(&new);
 //
@@ -207,15 +242,16 @@ int main(){
 	ZOZNAM intersect;
 	intersection(&intersect, &zoznam, &new);
 	printlist(&intersect);
+//
 	puts("delete intersect last item and return list:");
 	pop(&intersect);
 	printlist(&intersect);
     destructList(&zoznam);
 	destructList(&new);
 	destructList(&intersect);
+//
 	puts("delete all lists:");
 	printlist(&zoznam);
 	printlist(&intersect);
 	printlist(&new);
-
-}//
+}
