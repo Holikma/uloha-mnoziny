@@ -147,6 +147,13 @@ void mergeSort(ZOZNAM *arr, int l, int r){
 void pop(ZOZNAM *zoz){
 	memmove(zoz, zoz->pole+1, zoz->dlzka--*sizeof(int));
 }
+void destructList(ZOZNAM* list) {
+    if (list->pole != NULL) {
+        free(list->pole);
+        list->pole = NULL;
+    }
+    list->dlzka = 0;
+}
 
 int main(){
     ZOZNAM zoznam;
@@ -203,5 +210,12 @@ int main(){
 	puts("delete intersect last item and return list:");
 	pop(&intersect);
 	printlist(&intersect);
-    free(zoznam.pole);
+    destructList(&zoznam);
+	destructList(&new);
+	destructList(&intersect);
+	puts("delete all lists:");
+	printlist(&zoznam);
+	printlist(&intersect);
+	printlist(&new);
+
 }//
