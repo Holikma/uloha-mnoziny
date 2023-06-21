@@ -24,11 +24,11 @@ void printlist(ZOZNAM *z){
 }
 
 // zjednotenie linearny čas
-void unionlists(ZOZNAM* un, ZOZNAM *zoz1, ZOZNAM *zoz2){
+int unionlists(ZOZNAM* un, ZOZNAM *zoz1, ZOZNAM *zoz2){
 	un->dlzka = zoz1->dlzka + zoz2->dlzka;
 	un->pole = (int*)malloc(un->dlzka*sizeof(int));
 	if(un->pole == NULL){
-        exit(1);
+        return -1;
     }
 	int j = 0;
 	for(int i = 0; i < zoz1->dlzka; i++){
@@ -38,6 +38,7 @@ void unionlists(ZOZNAM* un, ZOZNAM *zoz1, ZOZNAM *zoz2){
   	for(int i = 0; i < zoz2->dlzka; i++){
   		un->pole[j] = zoz2->pole[i];
   	j++;
+	return 1;
   }
 }
 // binary search
@@ -47,15 +48,15 @@ int binarySearch(ZOZNAM *zoz, int x, int low, int high) {
     if (zoz->pole[mid] == x) return mid;
     if (zoz->pole[mid] > x) return binarySearch(zoz, x, low, mid - 1);
     return binarySearch(zoz, x, mid + 1, high);}
-	return 1;
+	return -1;
 }
 
 // prazdna mnozina dlzky n
-void emptylist(ZOZNAM* n, int d){
+int emptylist(ZOZNAM* n, int d){
     n->dlzka = d;
     n->pole = (int*)malloc(n->dlzka*sizeof(int));
 	if (n->pole == NULL){
-        exit(1);
+        return -1;
     }
     
     for (int i = 0; i < n->dlzka; i++){
@@ -64,10 +65,10 @@ void emptylist(ZOZNAM* n, int d){
 }
 
 // pridat prvok na koniec
-void funkcia_append(ZOZNAM *zoz, int prvok){
+int funkcia_append(ZOZNAM *zoz, int prvok){
     int *new_ptr = realloc(zoz->pole, sizeof *(zoz->pole) * (zoz->dlzka + 1u));
 	if (new_ptr == NULL) {
-        exit(1);
+        return -1;
 	}
 	zoz->pole = new_ptr;
 	zoz->pole[zoz->dlzka] = prvok;
@@ -75,14 +76,14 @@ void funkcia_append(ZOZNAM *zoz, int prvok){
 }
 
 // mergesort v C
-void merge(int *arr, int l, int m, int r){
+int merge(int *arr, int l, int m, int r){
     int k;
     int n1 = m - l + 1;
     int n2 = r - m;
     int *L = (int*)malloc(n1*sizeof(int));
 	int *R = (int*)malloc(n2*sizeof(int));
 	if (L == NULL || R == NULL) {
-        exit(1);
+        return -1;
     }
 
 	for (int i = 0; i < n1; i++){
@@ -127,7 +128,7 @@ void mergeSort(ZOZNAM *arr, int l, int r){
 }
 
 // prienik lineárny čas - output nová množina na pozícií *
- void intersection(ZOZNAM* inter, ZOZNAM *zoz1, ZOZNAM *zoz2){
+ int intersection(ZOZNAM* inter, ZOZNAM *zoz1, ZOZNAM *zoz2){
 	int count = 0;
 	int index1 = 0;
 	int index2 = 0;
@@ -145,9 +146,9 @@ void mergeSort(ZOZNAM *arr, int l, int r){
 	inter->dlzka = count;
 	inter->pole = (int*)malloc(inter->dlzka*sizeof(int));
 	if (inter->pole == NULL){
-		exit(1);
+		return -1;
     }
-	count = 0;index1 = 0; index2 = 0;
+	count = 0; index1 = 0; index2 = 0;
 	for (int i = 0; i < zoz1->dlzka + zoz2->dlzka; i++){
 		if (zoz1->pole[index1] == zoz2->pole[index2]){
 			inter->pole[count] = zoz1->pole[index1];
@@ -173,30 +174,35 @@ int main(){
     ZOZNAM zoznam;
     zoznam.dlzka = 5;
     zoznam.pole = (int*)malloc(zoznam.dlzka*sizeof(int));
-	if (zoznam.pole == NULL){
-		exit(1);
-	}
-	for(int i = 0; i < zoznam.dlzka; i++){
-		if (i % 2 == 0){
-			zoznam.pole[i] = -i;
+	if (zoznam.pole != NULL){
+		for(int i = 0; i < zoznam.dlzka; i++){
+			if (i % 2 == 0){
+				zoznam.pole[i] = -i;
+			}
+			else{
+				zoznam.pole[i] = i;
+			}
 		}
-		else{
-			zoznam.pole[i] = i;
-		}
+		puts("nový zoznam:");
+    	printlist(&zoznam);
+
 	}
-	puts("nový zoznam:");
-    printlist(&zoznam);
-//
-	puts("append function:");
-    funkcia_append(&zoznam, 5);
-	funkcia_append(&zoznam, 8);
-    printlist(&zoznam);
+//	
+	if (zoznam.pole != NULL){
+		puts("append function:");
+    	funkcia_append(&zoznam, 5);
+		funkcia_append(&zoznam, 8);
+    	printlist(&zoznam);
+	}
 //
     int hladaj = 5;
-    printf("Cislo %i je na indexe: %i\n",hladaj,  binarySearch(&zoznam, hladaj, 0, zoznam.dlzka));
+	if (zoznam.pole != NULL){
+	    printf("Cislo %i je na indexe: %i\n",hladaj,  binarySearch(&zoznam, hladaj, 0, zoznam.dlzka));
+	}
     ZOZNAM k;
 	emptylist(&k, 5);
 //
+	
 	puts("empty list:");
 	printlist(&k);
 //
@@ -214,7 +220,8 @@ int main(){
 	new.dlzka = 3;
 	new.pole = (int*)malloc(new.dlzka*sizeof(int));
 	if (new.pole == NULL){
-		exit(1);
+		return -1;
+	}
 	for(int i = 0; i < new.dlzka; i++){
 		new.pole[i] = i;
 	}
